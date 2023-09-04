@@ -28,18 +28,24 @@ const client = new MongoClient(uri, {
 //   .then(async (db) => await db.close())
 //   .catch((err) => console.log(err));
 
-const connect = async () => {
+async function run() {
   try {
-    await client.connect();
-    const pingResult = await client.db("admin").command({ ping: 1 });
-    if (pingResult.ok === 1) {
-      console.log("You successfully connected to MongoDB!");
-    }
-  } catch (error) {
-    console.log(error);
+    const database = client.db("sample_airbnb");
+    const movies = database.collection("listingsAndReviews");
+    // query for movies that have a runtime less than 15 minutes
+
+    const cursor = movies.find(
+      { bedrooms: { $eq: 1 } },
+      { projection: { _id: 0, name: 1 } }
+    );
+    // print a message if no documents were found
+    // for await (const doc of cursor) {
+    //   console.log(doc);
+    // }
+
+    console.log(cursor);
   } finally {
     await client.close();
   }
-};
-
-connect();
+}
+run();
